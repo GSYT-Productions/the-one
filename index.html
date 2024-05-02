@@ -5,62 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            background-color: black;
+            background-color: #000;
             margin: 0;
             overflow: hidden;
         }
-
-        .matrix-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            font-family: monospace;
-            font-size: 20px;
-            line-height: 1;
-            color: #0F0; /* Green color */
+        canvas {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="matrix-container"></div>
-
+    <canvas id="matrixCanvas"></canvas>
     <script>
-        const matrixContainer = document.querySelector('.matrix-container');
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        const columns = Math.floor(canvas.width / 20);
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         const getRandomCharacter = () => characters[Math.floor(Math.random() * characters.length)];
 
-        const createMatrixColumn = () => {
-            const column = document.createElement('div');
-            column.classList.add('matrix-column');
-            for (let i = 0; i < 30; i++) {
-                const char = getRandomCharacter();
-                const charElement = document.createElement('span');
-                charElement.textContent = char;
-                column.appendChild(charElement);
+        const drawMatrix = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; // Green color
+            ctx.font = '20px monospace';
+
+            for (let col = 0; col < columns; col++) {
+                let text = '';
+                for (let row = 0; row < 30; row++) {
+                    text += getRandomCharacter();
+                }
+                ctx.fillText(text, col * 20, Math.random() * canvas.height);
             }
-            return column;
         };
 
-        const animateMatrix = () => {
-            const column = createMatrixColumn();
-            matrixContainer.appendChild(column);
-
-            const columnHeight = column.clientHeight;
-            const animationDuration = Math.random() * 10 + 5; // Random duration for falling animation
-
-            column.style.animation = `fall ${animationDuration}s linear infinite`;
-
-            // Remove the column when it reaches the bottom
-            column.addEventListener('animationiteration', () => {
-                matrixContainer.removeChild(column);
-            });
+        const animate = () => {
+            drawMatrix();
+            requestAnimationFrame(animate);
         };
 
-        // Create new matrix columns periodically
-        setInterval(animateMatrix, 200); // Adjust the interval as desired
+        animate();
     </script>
 </body>
 </html>
